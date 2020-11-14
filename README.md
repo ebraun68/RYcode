@@ -30,5 +30,8 @@ is done to make it possible to use of PAUP* to examine base composition)
 exiting...
 ```
 
+The 0/1 data can be analyzed in programs like IQ-TREE and RAxML to generate estimates
+of phylogeny. The RY nexus files can be analyzed in PAUP
+
 This repository also includes the simple concatenation code used for the Braun and
 Kimball (2020) project.
