@@ -8,7 +8,7 @@ This script uses a non-interleaved relaxed phylip file of DNA sequences as input
 it produces either a binary relaxed phylip file or a nexus file with the data encoded
 as R and Y.
 
-The program is straightforward to use; it will provide instruction when called without
+The program is straightforward to use; it will provide instructions when called without
 command line options:
 
 ./recodeRY.pl 
