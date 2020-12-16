@@ -16,6 +16,9 @@ my($lter);
 my($mter);
 my($nter);
 
+my($tempvar);
+my @temparray;
+
 if ( @ARGV != 3 ) {
 	print "Usage:\n  \$ $progname <authority> <filelist> <outfile>\n";
 	print "  authority = list of taxa\n";
@@ -85,8 +88,12 @@ for ($iter=0; $iter<$listnum; $iter++) {
 	@phylist = <$PHYF>; # Read the phylip input file
 	close($PHYF) or die "Could not close file $listlist[$iter]\n";
 	$phynum = $#phylist + 1;
-	($ntaxa,$nsites) = split(/\s+/, $phylist[0]);
-	chomp($nsites);
+	chomp($phylist[0]);
+	(@temparray) = split(/\s+/, $phylist[0]);
+	$tempvar = @temparray; # check whether ntax and nsites is preceded by a space
+	$ntaxa = $temparray[$tempvar-2];
+	$nsites = $temparray[$tempvar-1];
+#	print "READING phylip file $listlist[$iter] -- $tempvar -- $ntaxa -- $nsites\n";
 	$totalsites = $totalsites + $nsites;
 	
 	$lastsite = $firstsite + $nsites - 1;
@@ -122,8 +129,11 @@ for ($iter=0; $iter<$listnum; $iter++) {
 	@phylist = <$INF>; # Read the phylip input file
 	close($INF) or die "Could not close file $listlist[$iter]\n";
 	$phynum = $#phylist + 1;
-	($ntaxa,$nsites) = split(/\s+/, $phylist[0]);
-	chomp($nsites);
+	chomp($phylist[0]);
+	(@temparray) = split(/\s+/, $phylist[0]);
+	$tempvar = @temparray;
+	$ntaxa = $temparray[$tempvar-2];
+	$nsites = $temparray[$tempvar-1];
 	$totalsites = $totalsites + $nsites;
 	print $OUTF "\[ Data block $listlist[$iter] -- $nsites sites -- $totalsites total sites \]\n";
 	
