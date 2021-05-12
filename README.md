@@ -2,7 +2,7 @@
 Script for RY/SW/KM coding of phylogenetic data
 
 Used for analyses in:
-Braun, E.L.; Kimball, R.T. Data Types and the Phylogeny of Neoaves. Birds 2021, 2, 1-22. 
+Braun EL & Kimball RT 2021. Data types and the phylogeny of Neoaves. Birds, 2, 1-22. 
 https://doi.org/10.3390/birds2010001
 
 This script uses a non-interleaved relaxed phylip file of DNA sequences as input and
