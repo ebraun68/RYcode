@@ -32,7 +32,8 @@ exiting...
 ```
 
 The 0/1 data can be analyzed in programs like IQ-TREE and RAxML to generate estimates
-of phylogeny. The RY nexus files can be analyzed in PAUP
+of phylogeny. The RY nexus files can be analyzed in PAUP (note that the use of RY in
+this context is a kludge that allows use PAUP to calculate nucleotide frequencies).
 
 This repository also includes the simple concatenation code used for the Braun and
 Kimball (2020) project.
