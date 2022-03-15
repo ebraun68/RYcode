@@ -77,17 +77,21 @@ The filelist is a list of all individual files to concatenate. The files should 
 in sequential relaxed phylip format, with the sequences on a single line. Taxon names
 should not include whitespace. An example of this format follows:
 
+```
 5    42
 Turkey                  AAGCTNGGGCATTTCAGGGTGAGCCCGGGCAATACAGGGTAT
 Salmo_schiefermuelleri  AAGCCTTGGCAGTGCAGGGTGAGCCGTGGCCGGGCACGGTAT
 H_sapiens               ACCGGTTGGCCGTTCAGGGTACAGGTTGGCCGTTCAGGGTAA
 Chimp                   AAACCCTTGCCGTTACGCTTAAACCGAGGCCGGGACACTCAT
 Gorilla                 AAACCCTTGCCGGTACGCTTAAACCATTGCCGGTACGCTTAA
-  
+```
+
 PAUP* will output data in this format using the following command:
 
+```
   export file=FILENAME.phy format=RelPHYLIP charsperline=all replace;
-  
+```
+
 Outfile prefix:
   
 The concatenated file will be called OUTFILE.nex and it will be an interleaved nexus
