@@ -23,7 +23,10 @@ if ( @ARGV != 3 ) {
 	print "Usage:\n  \$ $progname <authority> <filelist> <outfile>\n";
 	print "  authority = list of taxa\n";
 	print "  filelist  = list of phylip format files\n";
-	print "  outfile   = concatenated outfile\n";
+	print "  outfile   = outfile prefix\n";
+	print "     -- concatenated nexus file: <outfile>.nex\n";
+	print "     -- nexus sets block:        <outfile>.partitions.txt\n";
+	print "     -- RAxML paratition file:   <outfile>.raxparts.txt\n";
 	print "exiting...\n";
 	exit;
 }
@@ -77,11 +80,14 @@ open (my $PARTF, ">$outfile.partitions.txt") or die "Could not open file $outfil
 my($firstsite) = 1;
 my($lastsite);
 
-print $PARTF "\nBegin sets;\n";
+# Also write a RAxML partitions block in parallel with the nexus sets block
+open (my $RAXF, ">$outfile.raxparts.txt") or die "Could not open file $outfile.raxparts.txt for output.\n";
+
+print $PARTF "#NEXUS\n\nBegin sets;\n";
 
 for ($iter=0; $iter<$listnum; $iter++) {
 	chomp($listlist[$iter]);
-#	print "  -- file = $listlist[$iter]\n";
+	print "  -- file = $listlist[$iter]\n";
 	
 	# Read the phylip input file, calculate the total number of sites
 	open (my $PHYF, $listlist[$iter]) or die "Could not open file $listlist[$iter] for input.\n";
@@ -99,16 +105,24 @@ for ($iter=0; $iter<$listnum; $iter++) {
 	$lastsite = $firstsite + $nsites - 1;
 	print $PARTF "\tcharset $listlist[$iter] = $firstsite - $lastsite ; [ $nsites sites ]\n";
 	$firstsite = $firstsite + $nsites;
+	# Print the RAxML partition file
+	print $RAXF "DNA, $listlist[$iter]";
+	print $RAXF "=";
+	print $RAXF "$firstsite";
+	print $RAXF "-";
+	print $RAXF "$lastsite\n";
+
 }
 
 print $PARTF "End;\n\n";
 close($PARTF) or die "Could not close file $outfile.partitions.txt\n";
+close($RAXF) or die "Could not close file $outfile.raxparts.txt\n";
 
 
 print "The final concatenated file will have a total of $totalsites sites\n\n";
 
 # Then iterate through the files and output the nexus file
-open (my $OUTF, ">$outfile") or die "Could not open file $outfile for output.\n";
+open (my $OUTF, ">$outfile.nex") or die "Could not open file $outfile.nex for output.\n";
 
 print $OUTF "#NEXUS\n\n";
 print $OUTF "Begin data;\n";
@@ -146,6 +160,7 @@ for ($iter=0; $iter<$listnum; $iter++) {
 			($name,$seq) = split(/\s+/, $phylist[$kter]);
 			if ( $name eq $authlist[$jter] ) {
 				chomp($seq);
+				$seq = uc($seq);
 				print $OUTF "$seq\n";
 				$found = 1;
 			}
@@ -161,10 +176,10 @@ for ($iter=0; $iter<$listnum; $iter++) {
 
 print $OUTF "\t;\nEnd;\n\n";
 
-close($OUTF) or die "Could not close file $outfile.\n";
+close($OUTF) or die "Could not close file $outfile.nex.\n";
 
 # Append the sets block to the nexus file
-system("cat $outfile.partitions.txt >> $outfile");
+system("sed '1d' $outfile.partitions.txt >> $outfile.nex");
 
 print "\nFile concatenation complete...\n";
 
