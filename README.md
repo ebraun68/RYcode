@@ -51,6 +51,7 @@ alignment files, all in relaxed phylip format (sequential single-line format). A
 with the recodeRY.pl script, calling simple_concat.pl with no command line options
 prints information about usage:
 
+```
 Usage:
   $ simple_concat.pl <authority> <filelist> <outfile>
   authority = list of taxa
@@ -60,6 +61,7 @@ Usage:
      -- nexus sets block:        <outfile>.partitions.txt
      -- RAxML paratition file:   <outfile>.raxparts.txt
 exiting...
+```
 
 Authority file:
 
