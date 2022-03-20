@@ -64,6 +64,14 @@ Usage:
      -- nexus sets block:        <outfile>.partitions.txt
      -- RAxML partition file:    <outfile>.raxparts.txt
      -- Complete taxon list:     <outfile>.taxonlist.txt
+NOTE:
+  The filelist, authority file, and outfile prefix can be passed to
+  program in any order if you run the program using the following flags:
+     -l for listfile
+     -a for authority file
+     -o for outfile prefix
+  Like this:
+  $ simple_concat.pl -a=<authority> -l=<filelist> -o=<outfile>
 exiting...
 ```
 Filelist:
@@ -102,9 +110,11 @@ output file.
 
 You can autogenerate an authority file from the input relaxed phylip files if you use the
 following keywords:
+```
     --fromfiles
     --getnames
     --getnamesonly (this will produce an authority file and exit)
+```
 The order of taxon names in the authority file produced from the input files will match the
 order of taxa in the first input file. If the taxa listed in the first input file do not
 correspond to the full set of taxa in all input files the addition taxa are appended to this
