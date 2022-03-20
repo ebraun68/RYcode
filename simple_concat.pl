@@ -35,7 +35,7 @@ if ( @ARGV != 3 ) {
 	print "NOTE:\n";
 	print "  The filelist, authority file, and outfile prefix can be passed to\n";
 	print "  program in any order if you run the program using the following flags:\n";
-	print "     -l for listfile\n";
+	print "     -l for filelist\n";
 	print "     -a for authority file\n";
 	print "     -o for outfile prefix\n";
 	print "  Like this:\n";
