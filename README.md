@@ -77,7 +77,7 @@ exiting...
 
 The default order for the command line arguments is filelist, authority file, and then 
 outfile prefix. However, these arguments can be passed in any order if you indicate the 
-arguments using -l=<filelist>, -a=<authority>, and -o=<outfile>
+arguments using -l=filelist, -a=authority, and -o=outfile
 
 ### Filelist:
 
@@ -135,8 +135,18 @@ nexus file with the locus boundaries is also available, as is a RAxML format par
 file. 
   
 If OUTFILE.nex does not import properly when you read the file in another program, check the 
-partition names. This is often a source of problems. For example, some phylogenetic programs may
-find a partition name like gene1.phy problematic but be fine with gene1; in that example
-you could correct the file using sed 's/.phy//g' OUTFILE.nex > temp (and then renaming the
-temp file OUTFILE.nex). If the problem appears to be the nexus data block, execute the file
-in PAUP* and then export in a usable format.
+partition names. This is often a source of problems. One of the biggest problems can be the
+inclusion of paths in the partition names. For example, you might have a list of files that 
+includes a path, like this: MYALN/gene1.phy, MYALN/gene2.phy, etc. Likewise,  some phylogenetic 
+programs may find a partition name with a period (like gene1.phy) problematic but be fine with 
+gene1 alone. In these examples you could correct the file using sed, like this:
+```
+First example (path inclued in partition name):
+   sed 's/MYALN\///g' OUTFILE.nex > temp
+   mv temp OUTFILE.nex
+Second example (filename extension inclued in partition name):
+   sed 's/.phy//g' OUTFILE.nex > temp
+   mv temp OUTFILE.nex
+```
+If the problem appears to be the nexus data block, execute the file in PAUP* and then export 
+in a usable format.
