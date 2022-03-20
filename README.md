@@ -144,6 +144,7 @@ gene1 alone. In these examples you could correct the file using sed, like this:
 First example (path inclued in partition name):
    sed 's/MYALN\///g' OUTFILE.nex > temp
    mv temp OUTFILE.nex
+
 Second example (filename extension inclued in partition name):
    sed 's/.phy//g' OUTFILE.nex > temp
    mv temp OUTFILE.nex
