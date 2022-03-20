@@ -117,7 +117,7 @@ You can autogenerate an authority file from the input relaxed phylip files if yo
 following keywords:
 ```
     --fromfiles
-    --getnames
+    --getnames (alternative to --fromfiles, yields identical output)
     --getnamesonly (this will produce an authority file and exit)
 ```
 The order of taxon names in the authority file produced from the input files will match the
