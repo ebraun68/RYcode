@@ -20,40 +20,29 @@ my($tempvar);
 my @temparray;
 
 if ( @ARGV != 3 ) {
-	print "Usage:\n  \$ $progname <authority> <filelist> <outfile>\n";
-	print "  authority = list of taxa\n";
+	print "Usage:\n  \$ $progname <filelist> <authority> <outfile>\n";
 	print "  filelist  = list of phylip format files\n";
+	print "  authority = list of taxa\n";
+	print "     -- use --fromfiles to generate the authority file\n";
+	print "     -- use --getnamesonly to generate the authority file and exit\n";
+	print "     -- ontherwise enter the name of a file with taxon names\n";
 	print "  outfile   = outfile prefix\n";
 	print "     -- concatenated nexus file: <outfile>.nex\n";
 	print "     -- nexus sets block:        <outfile>.partitions.txt\n";
-	print "     -- RAxML paratition file:   <outfile>.raxparts.txt\n";
+	print "     -- RAxML partition file:    <outfile>.raxparts.txt\n";
+	print "     -- Complete taxon list:     <outfile>.taxonlist.txt\n";
 	print "exiting...\n";
 	exit;
 }
 
-my($authfile) = $ARGV[0];
-my($listfile) = $ARGV[1];
+my($listfile) = $ARGV[0];
+my($authfile) = $ARGV[1];
 my($outfile)  = $ARGV[2];
 
 ############################################################################
-# Read the control file
+# Read the list of sequence alignment files
 ############################################################################
-print "Reading the authority file... ";
-open (my $AUTHF, $authfile) or die "Could not open file $authfile for input.\n";
-my @authlist = <$AUTHF>; # Read the authority file
-close($AUTHF) or die "Could not close file $authfile.\n";
-my($authnum) = $#authlist + 1;
-print "$authnum taxon names read\n\n";
-
-my($maxlen) = 0;
-for ($iter=0; $iter<$authnum; $iter++) {
-	chomp($authlist[$iter]);
-	if ( length($authlist[$iter]) > $maxlen ) { $maxlen=length($authlist[$iter]); }
-	print "   $authlist[$iter]\n";
-}
-print "Maximum taxon name length is $maxlen characters\n\n";
-
-print "Reading the list of phylip input files... ";
+print "Reading the list of relaxed phylip input files... ";
 open (my $LISTF, $listfile) or die "Could not open file $listfile for input.\n";
 my @listlist = <$LISTF>; # Read the list file
 close($LISTF) or die "Could not close file $listfile.\n";
@@ -61,7 +50,7 @@ my($listnum) = $#listlist + 1;
 print "will concatenate data from $listnum files\n\n";
 
 ############################################################################
-# Iterate through the files and generate concatenated files
+# Iterate through the files and generate sets block
 ############################################################################
 my @datalist;
 my($name);
@@ -74,6 +63,9 @@ my($phynum);
 my @phylist;
 my($found);
 my($totalsites)=0;
+
+my @completenameset;
+my($completenamenum)=0;
 
 # First, calculate the total number of sites and write a sets block
 open (my $PARTF, ">$outfile.partitions.txt") or die "Could not open file $outfile.partitions.txt for output.\n";
@@ -111,6 +103,28 @@ for ($iter=0; $iter<$listnum; $iter++) {
 	print $RAXF "$firstsite";
 	print $RAXF "-";
 	print $RAXF "$lastsite\n";
+	
+	# Check the taxon names
+	if ( $iter == 0 ) {
+		for ($jter=0; $jter<$ntaxa; $jter++) {
+			(@temparray) = split(/\s+/, $phylist[$jter+1]);
+			@completenameset[$jter] = $temparray[0];
+			$completenamenum++;
+		}
+	}
+	else {
+		for ($jter=0; $jter<$ntaxa; $jter++) {
+			(@temparray) = split(/\s+/, $phylist[$jter+1]);
+			$found = 0;
+			for ($kter=0; $kter<$completenamenum; $kter++) {
+				if ( $temparray[0] eq $completenameset[$kter] ) { $found = 1; }
+			}
+			if ( $found == 0 ) {
+				push(@completenameset, $temparray[0]);
+				$completenamenum++;
+			}
+		}
+	}
 
 }
 
@@ -118,8 +132,45 @@ print $PARTF "End;\n\n";
 close($PARTF) or die "Could not close file $outfile.partitions.txt\n";
 close($RAXF) or die "Could not close file $outfile.raxparts.txt\n";
 
+print "The final concatenated file will have a total of $totalsites sites\n";
+print "A total of $completenamenum unique taxon names were found in the input files\n\n";
 
-print "The final concatenated file will have a total of $totalsites sites\n\n";
+open (my $NAMEF, ">$outfile.taxonlist.txt") or die "Could not open file $outfile.taxonlist.txt for output.\n";
+for ($iter=0; $iter<$completenamenum; $iter++) {
+	print $NAMEF "$completenameset[$iter]\n";
+}
+close($NAMEF) or die "Could not close file $outfile.taxonlist.txt\n";
+
+if ( lc($authfile) eq "--fromfiles" || lc($authfile) eq "--fromfiles" ) { 
+	$authfile = "$outfile.taxonlist.txt"; 
+}
+elsif ( lc($authfile) eq "--getnamesonly" ) { 
+	print "Run in --getnamesonly mode. Taxon names written to $outfile.taxonlist.txt\n";
+	print "exiting...\n";
+	exit; 
+}
+
+############################################################################
+# Read the authority file
+############################################################################
+print "Reading the authority file... ";
+open (my $AUTHF, $authfile) or die "Could not open file $authfile for input.\n";
+my @authlist = <$AUTHF>; # Read the authority file
+close($AUTHF) or die "Could not close file $authfile.\n";
+my($authnum) = $#authlist + 1;
+print "$authnum taxon names read\n\n";
+
+my($maxlen) = 0;
+for ($iter=0; $iter<$authnum; $iter++) {
+	chomp($authlist[$iter]);
+	if ( length($authlist[$iter]) > $maxlen ) { $maxlen=length($authlist[$iter]); }
+	print "   $authlist[$iter]\n";
+}
+print "Maximum taxon name length is $maxlen characters\n\n";
+
+############################################################################
+# Iterate through the files and generate the concatenated file
+############################################################################
 
 # Then iterate through the files and output the nexus file
 open (my $OUTF, ">$outfile.nex") or die "Could not open file $outfile.nex for output.\n";
