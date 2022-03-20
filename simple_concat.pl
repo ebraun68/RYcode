@@ -17,6 +17,7 @@ my($mter);
 my($nter);
 
 my($tempvar);
+my($tempstr);
 my @temparray;
 
 if ( @ARGV != 3 ) {
@@ -31,13 +32,55 @@ if ( @ARGV != 3 ) {
 	print "     -- nexus sets block:        <outfile>.partitions.txt\n";
 	print "     -- RAxML partition file:    <outfile>.raxparts.txt\n";
 	print "     -- Complete taxon list:     <outfile>.taxonlist.txt\n";
+	print "NOTE:\n";
+	print "  The filelist, authority file, and outfile prefix can be passed to\n";
+	print "  program in any order if you run the program using the following flags:\n";
+	print "     -l for listfile\n";
+	print "     -a for authority file\n";
+	print "     -o for outfile prefix\n";
+	print "  Like this:\n";
+	print "  \$ $progname -a=<authority> -l=<filelist> -o=<outfile>\n";
 	print "exiting...\n";
 	exit;
 }
 
+# Read in default order, then check for flags
 my($listfile) = $ARGV[0];
 my($authfile) = $ARGV[1];
 my($outfile)  = $ARGV[2];
+
+for ($iter=0; $iter<3; $iter++) {
+	$tempstr = substr($ARGV[$iter],0,3);
+	if ( $tempstr eq "-l=") { $listfile = substr($ARGV[$iter],3); }
+	if ( $tempstr eq "-a=") { $authfile = substr($ARGV[$iter],3); }
+	if ( $tempstr eq "-o=") { $outfile =  substr($ARGV[$iter],3); }
+	if ( lc($ARGV[$iter]) eq "--fromfiles" )  { $authfile = "--fromfiles"; }
+	if ( lc($ARGV[$iter]) eq "--getnames" )  { $authfile = "--getnames"; }
+	if ( lc($ARGV[$iter]) eq "--getnamesonly" )  { $authfile = "--getnamesonly"; }
+}
+
+# Echo information about the input files
+print "\nRunning $progname\n\n";
+if ( $authfile eq "--getnamesonly" ) { print "Identify taxon names "; }
+else { print "Concatenate sequences "; }
+print "in the relaxed phylip files listed in $listfile\n";
+if ( $authfile eq "--fromfiles" || $authfile eq "--fromfiles" ) {
+	print "Generate taxon authority file from the taxon names in the input files\n";
+}
+elsif ( $authfile eq "--getnamesonly" ) {
+	print "Generate taxon authority file from the taxon names in the input files and EXIT...\n";
+}
+else {
+print "Use taxon authority file $authfile to organize taxa in concatenated file\n";
+
+}
+print "Write data to output files with prefix $outfile";
+if ( $authfile eq "--getnamesonly" ) {
+print " (authority file is $outfile.taxonlist.txt)\n\n";
+}
+else {
+print " (main output file is $outfile.nex)\n\n";
+}
 
 ############################################################################
 # Read the list of sequence alignment files
@@ -108,7 +151,7 @@ for ($iter=0; $iter<$listnum; $iter++) {
 	if ( $iter == 0 ) {
 		for ($jter=0; $jter<$ntaxa; $jter++) {
 			(@temparray) = split(/\s+/, $phylist[$jter+1]);
-			@completenameset[$jter] = $temparray[0];
+			$completenameset[$jter] = $temparray[0];
 			$completenamenum++;
 		}
 	}
@@ -141,10 +184,10 @@ for ($iter=0; $iter<$completenamenum; $iter++) {
 }
 close($NAMEF) or die "Could not close file $outfile.taxonlist.txt\n";
 
-if ( lc($authfile) eq "--fromfiles" || lc($authfile) eq "--fromfiles" ) { 
+if ( $authfile eq "--fromfiles" || $authfile eq "--getnames" ) { 
 	$authfile = "$outfile.taxonlist.txt"; 
 }
-elsif ( lc($authfile) eq "--getnamesonly" ) { 
+elsif ( $authfile eq "--getnamesonly" ) { 
 	print "Run in --getnamesonly mode. Taxon names written to $outfile.taxonlist.txt\n";
 	print "exiting...\n";
 	exit; 
