@@ -79,7 +79,7 @@ The default order for the command line arguments is filelist, authority file, an
 outfile prefix. However, these arguments can be passed in any order if you indicate the 
 arguments using -l=<filelist>, -a=<authority>, and -o=<outfile>
 
-###### Filelist:
+### Filelist:
 
 The filelist is a list of all individual files to concatenate. The files should be in
 sequential relaxed phylip format, with the sequences on a single line. Taxon names should
@@ -101,7 +101,7 @@ format using the following command:
   export file=FILENAME.phy format=RelPHYLIP charsperline=all replace;
 ```
 
-###### Authority file:
+### Authority file:
 
 The authority file is a list of the taxa to include in the final dataset, with one
 taxon per line. The order of taxa in the concatenated output file will match the authority
@@ -125,7 +125,7 @@ order of taxa in the first input file. If the taxa listed in the first input fil
 correspond to the full set of taxa in all input files the addition taxa are appended to this
 taxon list in the order in which they are encountered.
 
-###### Outfile prefix:
+### Outfile prefix:
   
 The concatenated file will be called OUTFILE.nex and it will be an interleaved nexus
 file with a data block that is readable by PAUP* (and at least some other nexus readers). 
