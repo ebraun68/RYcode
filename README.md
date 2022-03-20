@@ -44,7 +44,7 @@ This repository also includes the simple concatenation code used for the Braun a
 Kimball (2020) project.
 
 --------------------------------------------------------------------------------
-simple_concat.pl
+# simple_concat.pl
 
 A simple perl program to concatenate data from multiple loci in a set of separate
 alignment files, all in relaxed phylip format (sequential single-line format). As
@@ -67,18 +67,23 @@ Usage:
 NOTE:
   The filelist, authority file, and outfile prefix can be passed to
   program in any order if you run the program using the following flags:
-     -l for listfile
+     -l for filelist
      -a for authority file
      -o for outfile prefix
   Like this:
   $ simple_concat.pl -a=<authority> -l=<filelist> -o=<outfile>
 exiting...
 ```
-Filelist:
 
-The filelist is a list of all individual files to concatenate. The files should be
-in sequential relaxed phylip format, with the sequences on a single line. Taxon names
-should not include whitespace. An example of this format follows:
+The default order for the command line arguments is filelist, authority file, and then 
+outfile prefix. However, these arguments can be passed in any order if you indicate the 
+arguments using -l=<filelist>, -a=<authority>, and -o=<outfile>
+
+###### Filelist:
+
+The filelist is a list of all individual files to concatenate. The files should be in
+sequential relaxed phylip format, with the sequences on a single line. Taxon names should
+not include whitespace. An example of this format follows:
 
 ```
 5    42
@@ -89,14 +94,14 @@ Chimp                   AAACCCTTGCCGTTACGCTTAAACCGAGGCCGGGACACTCAT
 Gorilla                 AAACCCTTGCCGGTACGCTTAAACCATTGCCGGTACGCTTAA
 ```
 
-If you have your data in nexus format PAUP* will output data in relaxed phylip (single-
-line) format using the following command:
+If you have your data in nexus format PAUP* will output data in relaxed phylip (single-line)
+format using the following command:
 
 ```
   export file=FILENAME.phy format=RelPHYLIP charsperline=all replace;
 ```
 
-Authority file:
+###### Authority file:
 
 The authority file is a list of the taxa to include in the final dataset, with one
 taxon per line. The order of taxa in the concatenated output file will match the authority
@@ -120,7 +125,7 @@ order of taxa in the first input file. If the taxa listed in the first input fil
 correspond to the full set of taxa in all input files the addition taxa are appended to this
 taxon list in the order in which they are encountered.
 
-Outfile prefix:
+###### Outfile prefix:
   
 The concatenated file will be called OUTFILE.nex and it will be an interleaved nexus
 file with a data block that is readable by PAUP* (and at least some other nexus readers). 
