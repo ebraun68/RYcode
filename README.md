@@ -53,24 +53,19 @@ prints information about usage:
 
 ```
 Usage:
-  $ simple_concat.pl <authority> <filelist> <outfile>
-  authority = list of taxa
+  $ simple_concat.pl <filelist> <authority> <outfile>
   filelist  = list of phylip format files
+  authority = list of taxa
+     -- use --fromfiles to generate the authority file
+     -- use --getnamesonly to generate the authority file and exit
+     -- ontherwise enter the name of a file with taxon names
   outfile   = outfile prefix
      -- concatenated nexus file: <outfile>.nex
      -- nexus sets block:        <outfile>.partitions.txt
-     -- RAxML paratition file:   <outfile>.raxparts.txt
+     -- RAxML partition file:    <outfile>.raxparts.txt
+     -- Complete taxon list:     <outfile>.taxonlist.txt
 exiting...
 ```
-
-Authority file:
-
-The authority file is a list of the taxa to include in the final dataset, with one
-taxon per line. If a taxon in the authority file is absent from an individual gene
-file it will be added to the block for that locus and coded as missing data (?). If a
-taxon is present in an individual gene file it will be omitted from the concatenated
-output file
-
 Filelist:
 
 The filelist is a list of all individual files to concatenate. The files should be
@@ -86,11 +81,34 @@ Chimp                   AAACCCTTGCCGTTACGCTTAAACCGAGGCCGGGACACTCAT
 Gorilla                 AAACCCTTGCCGGTACGCTTAAACCATTGCCGGTACGCTTAA
 ```
 
-PAUP* will output data in this format using the following command:
+If you have your data in nexus format PAUP* will output data in relaxed phylip (single-
+line) format using the following command:
 
 ```
   export file=FILENAME.phy format=RelPHYLIP charsperline=all replace;
 ```
+
+Authority file:
+
+The authority file is a list of the taxa to include in the final dataset, with one
+taxon per line. The order of taxa in the concatenated output file will match the authority
+file, so it may be disirable to place OUTGROUP(s) first (because some programs may root
+output trees to the first taxon by default).
+
+If a taxon in the authority file is absent from an individual gene file it will be added 
+to the block for that locus and coded as missing data (?). If a taxon is absent from the 
+authority file but present in an individual gene file it will be omitted from the concatenated 
+output file.
+
+You can autogenerate an authority file from the input relaxed phylip files if you use the
+following keywords:
+    --fromfiles
+    --getnames
+    --getnamesonly (this will produce an authority file and exit)
+The order of taxon names in the authority file produced from the input files will match the
+order of taxa in the first input file. If the taxa listed in the first input file do not
+correspond to the full set of taxa in all input files the addition taxa are appended to this
+taxon list in the order in which they are encountered.
 
 Outfile prefix:
   
