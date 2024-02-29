@@ -11,7 +11,7 @@ it produces either a binary relaxed phylip file or a nexus file with the data en
 as R and Y.
 
 The program is straightforward to use; it will provide instructions when called without
-command line options, as follow:
+command line options, as follows:
 
 ./recodeRY.pl 
 
