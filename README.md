@@ -6,6 +6,8 @@ Used for analyses in:
 Braun EL & Kimball RT 2021. Data types and the phylogeny of Neoaves. Birds, 2, 1-22. 
 https://doi.org/10.3390/birds2010001
 
+Please cite Braun and Kimball (2021) if you use this program.
+
 This script uses a non-interleaved relaxed phylip file of DNA sequences as input and
 it produces either a binary relaxed phylip file or a nexus file with the data encoded
 as R and Y.
@@ -21,27 +23,39 @@ perl recode.pl
 
 ```
 Usage:
-  $ ./recodeRY.pl <infile> <outfile> <code> <binary>
+  $ ./recodeRY.pl <infile> <outfile> <code> <mode>
   infile  = relaxed phylip format DNA data
-  outfile = relaxed phylip format 01 (or RY) data
+  outfile = relaxed phylip format 01 data or nexus format RY data
   code    = RY (A or G = 0; C or T = 1)
             SW (G or C = 0; A or T = 1)
             KM (G or T = 0; A or C = 1)
-  binary  = yes (0/1) or no (R/Y)
+  mode    = binary (0/1), RY (R/Y), or third (every 3rd base R/Y)
 
-Setting 'binary' to 'no' will always code the datas as R and Y with the
-convention 0->R and 1->Y
-(i.e., code=SW and binary=no will code G and C as R and A and T as Y; this
-is done to make it possible to use of PAUP* to examine base composition)
-exiting...
+Setting 'mode' to 'RY' will always code the datas as R and Y with the
+following convention:
+     0->R and 1->Y
+(i.e., code=SW and mode=RY will code G and C as R and A and T as Y; this is
+done to make it possible to use PAUP* to examine base composition)
+
+Setting 'mode' to 'third' will recode every third position. The alignment
+is assumed to be exclusively coding, in frame, and start on a first position.
+The third base positions will be coded as R/Y, not 0/1.
 ```
 
 The 0/1 data can be analyzed in programs like IQ-TREE and RAxML to generate estimates
-of phylogeny. The RY nexus files can be analyzed in PAUP (note that the use of RY in
-this context is a kludge that allows use PAUP to calculate nucleotide frequencies).
+of phylogeny. The RY nexus files can be analyzed in PAUP or IQ-TREE (note that the 
+use of RY for SW or KM coding in this context is a kludge that allows one to use PAUP 
+to calculate nucleotide frequencies).
 
-This repository also includes the simple concatenation code used for the Braun and
-Kimball (2020) project.
+recodeRY.pl was modified from the version used in Braun and Kimball (2021) by adding
+the "third" option as a mode. If "third" is passed as the mode this recodeRY.pl will
+recode every third position but leave the first and second positions unchanged. This
+mode can only be used with RY coding (passing SW or KM will be ignored) and it assumes
+the input file is a coding sequence alignment that begins on a first position and has
+no internal frameshifts.
+
+This repository also includes the simple concatenation code used in the Braun and
+Kimball (2021) publication.
 
 --------------------------------------------------------------------------------
 # simple_concat.pl
